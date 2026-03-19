@@ -5,6 +5,7 @@
 ![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
 ![Allure](https://img.shields.io/badge/Allure_Report-2.x-orange?style=for-the-badge)
 ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-CI%2FCD-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)
+![Azure DevOps](https://img.shields.io/badge/Azure_DevOps-CI%2FCD-0078D7?style=for-the-badge&logo=azuredevops&logoColor=white)
 ![Status](https://img.shields.io/badge/Status-Em%20Desenvolvimento-yellow?style=for-the-badge)
 ![CI](https://github.com/felipenoite/projeto-cypress-saucedemo/actions/workflows/cypress.yml/badge.svg)
 
@@ -23,7 +24,7 @@
 - [Testes E2E](#-testes-e2e)
 - [Testes de API](#-testes-de-api)
 - [Relatórios](#-relatórios)
-- [CI/CD](#-cicd---github-actions)
+- [CI/CD](#-cicd---github-actions--azure-devops)
 - [Evidências](#-evidências)
 
 ---
@@ -46,6 +47,7 @@ Este projeto cobre dois tipos de testes para o site SauceDemo:
 | [Mochawesome](https://github.com/adamgruber/mochawesome) | ^7.x | Relatórios HTML estáticos |
 | [@badeball/cypress-cucumber-preprocessor](https://github.com/badeball/cypress-cucumber-preprocessor) | ^20.x | Suporte a escrita BDD com Gherkin |
 | [GitHub Actions](https://github.com/features/actions) | - | Pipeline CI/CD automatizada |
+| [Azure DevOps](https://azure.microsoft.com/pt-br/products/devops) | - | Pipeline CI/CD alternativa |
 
 ---
 
@@ -74,6 +76,7 @@ projeto-cypress-pipeline/
 ├── .github/
 │   └── workflows/
 │       └── cypress.yml          # Pipeline CI/CD GitHub Actions
+├── azure-pipelines.yml          # Pipeline CI/CD Azure DevOps
 ├── .gitignore
 ├── cypress.config.js            # Configuração principal do Cypress
 ├── package.json
@@ -224,13 +227,24 @@ O relatório é salvo em: `reports/html/cypress/reports/`
 
 ---
 
-## 🔁 CI/CD - GitHub Actions
+## 🔁 CI/CD - GitHub Actions + Azure DevOps
 
-A pipeline está configurada em `.github/workflows/cypress.yml` e roda automaticamente a cada **push** ou **Pull Request** na branch `main`.
+A pipeline está configurada em duas plataformas e roda automaticamente a cada **push** ou **Pull Request** na branch `main`.
 
-### Jobs da pipeline
+### GitHub Actions
+
+A pipeline do GitHub Actions está configurada em `.github/workflows/cypress.yml`.
 
 | Job | Specs executadas | Gatilho |
+|---|---|---|
+| 🖥️ Testes E2E | `login`, `inventory`, `cart`, `checkout`, `menu` | Push e PR na main |
+| 🔌 Testes de API | `api/api.cy.js` | Push e PR na main |
+
+### Azure DevOps
+
+A pipeline do Azure DevOps está configurada em `azure-pipelines.yml` na raiz do projeto. Conecta-se ao repositório do GitHub e roda os mesmos dois stages em paralelo:
+
+| Stage | Specs executadas | Gatilho |
 |---|---|---|
 | 🖥️ Testes E2E | `login`, `inventory`, `cart`, `checkout`, `menu` | Push e PR na main |
 | 🔌 Testes de API | `api/api.cy.js` | Push e PR na main |
