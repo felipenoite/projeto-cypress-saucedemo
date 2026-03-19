@@ -4,7 +4,9 @@
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 ![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
 ![Allure](https://img.shields.io/badge/Allure_Report-2.x-orange?style=for-the-badge)
+![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-CI%2FCD-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)
 ![Status](https://img.shields.io/badge/Status-Em%20Desenvolvimento-yellow?style=for-the-badge)
+![CI](https://github.com/felipenoite/projeto-cypress-saucedemo/actions/workflows/cypress.yml/badge.svg)
 
 > Projeto de estudos para automação de testes **E2E** e **API** do site [SauceDemo](https://www.saucedemo.com), utilizando **Cypress** com relatórios via **Allure** e **Mochawesome**.
 
@@ -21,6 +23,7 @@
 - [Testes E2E](#-testes-e2e)
 - [Testes de API](#-testes-de-api)
 - [Relatórios](#-relatórios)
+- [CI/CD](#-cicd---github-actions)
 - [Evidências](#-evidências)
 
 ---
@@ -42,6 +45,7 @@ Este projeto cobre dois tipos de testes para o site SauceDemo:
 | [Allure Report](https://docs.qameta.io/allure/) | ^2.x | Relatórios detalhados com histórico |
 | [Mochawesome](https://github.com/adamgruber/mochawesome) | ^7.x | Relatórios HTML estáticos |
 | [@badeball/cypress-cucumber-preprocessor](https://github.com/badeball/cypress-cucumber-preprocessor) | ^20.x | Suporte a escrita BDD com Gherkin |
+| [GitHub Actions](https://github.com/features/actions) | - | Pipeline CI/CD automatizada |
 
 ---
 
@@ -67,6 +71,10 @@ projeto-cypress-pipeline/
 ├── allure-report/               # Relatório HTML do Allure (gerado automaticamente)
 ├── reports/                     # Relatórios Mochawesome (gerado automaticamente)
 ├── screenshots/                 # Capturas de tela de falhas (gerado automaticamente)
+├── .github/
+│   └── workflows/
+│       └── cypress.yml          # Pipeline CI/CD GitHub Actions
+├── .gitignore
 ├── cypress.config.js            # Configuração principal do Cypress
 ├── package.json
 └── README.md
@@ -213,6 +221,39 @@ npx cypress run --reporter mochawesome
 ```
 
 O relatório é salvo em: `reports/html/cypress/reports/`
+
+---
+
+## 🔁 CI/CD - GitHub Actions
+
+A pipeline está configurada em `.github/workflows/cypress.yml` e roda automaticamente a cada **push** ou **Pull Request** na branch `main`.
+
+### Jobs da pipeline
+
+| Job | Specs executadas | Gatilho |
+|---|---|---|
+| 🖥️ Testes E2E | `login`, `inventory`, `cart`, `checkout`, `menu` | Push e PR na main |
+| 🔌 Testes de API | `api/api.cy.js` | Push e PR na main |
+
+### Artifacts gerados
+
+Após cada execução, os relatórios Allure ficam disponíveis para download na aba **Actions** do GitHub, em **Artifacts**:
+
+- `allure-report-e2e` — relatório dos testes E2E
+- `allure-report-api` — relatório dos testes de API
+
+### Visualizar o relatório Allure localmente
+
+Após baixar e extrair o `.zip` do artifact:
+
+```bash
+# Dentro da pasta extraída
+npx serve .
+```
+
+Acesse `http://localhost:3000` no navegador.
+
+> ⚠️ O Allure não funciona abrindo o `index.html` diretamente pelo navegador — sempre use um servidor local.
 
 ---
 
