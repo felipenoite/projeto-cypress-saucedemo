@@ -1,0 +1,97 @@
+name: 🧪 Cypress CI - SauceDemo
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+
+  # ─────────────────────────────────────────────
+  # JOB 1 - Testes E2E
+  # ─────────────────────────────────────────────
+  testes-e2e:
+    name: 🖥️ Testes E2E
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: 🟢 Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: 📦 Instalar dependências
+        run: npm ci
+
+      - name: 🧪 Executar testes E2E com Allure
+        run: npx cypress run --env allure=true --spec "cypress/e2e/login.cy.js,cypress/e2e/inventory.cy.js,cypress/e2e/cart.cy.js,cypress/e2e/checkout.cy.js,cypress/e2e/menu.cy.js"
+
+      - name: 📊 Gerar relatório Allure
+        if: always()
+        run: npx allure generate allure-results --clean -o allure-report
+
+      - name: 📤 Upload do relatório Allure (E2E)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report-e2e
+          path: allure-report/
+          retention-days: 30
+
+      - name: 📤 Upload de screenshots (em caso de falha)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-e2e
+          path: cypress/screenshots/
+          retention-days: 7
+
+  # ─────────────────────────────────────────────
+  # JOB 2 - Testes de API
+  # ─────────────────────────────────────────────
+  testes-api:
+    name: 🔌 Testes de API
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: 🟢 Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: 📦 Instalar dependências
+        run: npm ci
+
+      - name: 🔌 Executar testes de API com Allure
+        run: npx cypress run --env allure=true --spec "cypress/e2e/api/api.cy.js"
+
+      - name: 📊 Gerar relatório Allure
+        if: always()
+        run: npx allure generate allure-results --clean -o allure-report
+
+      - name: 📤 Upload do relatório Allure (API)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report-api
+          path: allure-report/
+          retention-days: 30
+
+      - name: 📤 Upload de screenshots (em caso de falha)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-api
+          path: cypress/screenshots/
+          retention-days: 7
